@@ -11,7 +11,7 @@ app.get("/api/topics", getTopics);
 
 app.get("/api", getEndpoints);
 
-app.get("/api/article/:article_id", getArticleById);
+app.get("/api/articles/:article_id", getArticleById);
 
 // ERROR HANDLING
 app.use((err, req, res, next) => {
@@ -27,6 +27,20 @@ app.all("/api/*", (req, res, next) => {
 	res.status(404).send({
 		msg: `Not Found. ${req.originalUrl} is not a valid endpoint. Try /api/`,
 	});
+});
+
+app.use((err, req, res, next) => {
+	if (err.code === "22P02") {
+		res.status(400).send({ msg: "Bad Request" });
+	} else {
+		next(err);
+	}
+});
+
+app.use((err, req, res, next) => {
+	if (err.msg === "requested article does not exist") {
+		res.status(404).send({ msg: "Not Found" });
+	}
 });
 
 // more verbose 500

@@ -1,7 +1,5 @@
 const db = require("../db/connection");
 exports.fetchArticleById = (article_id) => {
-	console.log(article_id, "<< article_id in model");
-
 	return db
 		.query(
 			`SELECT * FROM articles
@@ -9,6 +7,12 @@ exports.fetchArticleById = (article_id) => {
 			[article_id]
 		)
 		.then((results) => {
-			return results.rows[0];
+			if (results.rows.length === 0) {
+				return Promise.reject({
+					msg: "requested article does not exist",
+				});
+			} else {
+				return results.rows[0];
+			}
 		});
 };

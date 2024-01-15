@@ -77,7 +77,7 @@ describe("/api", () => {
 					"https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
 			};
 			return request(app)
-				.get("/api/article/1")
+				.get("/api/articles/1")
 				.expect(200)
 				.then((response) => {
 					const { article } = response.body;
@@ -86,7 +86,23 @@ describe("/api", () => {
 					}
 				});
 		});
-		// TODO: error handling
-		// TODO: add to endpoints.json
+		test("GET: 400 /invalid_id should respond with Bad Request", () => {
+			return request(app)
+				.get("/api/articles/invalid_id")
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
+				});
+		});
+		test("GET: 404 /20 should responsed with Not Found", () => {
+			return request(app)
+				.get("/api/articles/20")
+				.expect(404)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Not Found");
+				});
+		});
 	});
 });
