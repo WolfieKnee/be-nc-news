@@ -19,6 +19,13 @@ app.use((err, req, res, next) => {
 	} else next(err);
 });
 
+// catch invalid endpoints and redirect client to the /api/ for list of endpoints
+app.all("/api/*", (req, res, next) => {
+	res.status(404).send({
+		msg: `Not Found. ${req.originalUrl} is not a valid endpoint. try /api/`,
+	});
+});
+
 // more verbose 500
 app.use((err, req, res, next) => {
 	console.log(err, "<< err in app");
