@@ -1,6 +1,7 @@
 const express = require("express");
 const { getTopics } = require("./controllers/topics.controllers");
 const { getEndpoints } = require("./controllers/api.controllers");
+const { getArticleById } = require("./controllers/articles.controllers");
 
 const app = express();
 
@@ -9,6 +10,8 @@ const app = express();
 app.get("/api/topics", getTopics);
 
 app.get("/api", getEndpoints);
+
+app.get("/api/article/:article_id", getArticleById);
 
 // ERROR HANDLING
 app.use((err, req, res, next) => {
@@ -22,7 +25,7 @@ app.use((err, req, res, next) => {
 // catch invalid endpoints and redirect client to the /api/ for list of endpoints
 app.all("/api/*", (req, res, next) => {
 	res.status(404).send({
-		msg: `Not Found. ${req.originalUrl} is not a valid endpoint. try /api/`,
+		msg: `Not Found. ${req.originalUrl} is not a valid endpoint. Try /api/`,
 	});
 });
 
