@@ -31,18 +31,26 @@ describe("/api", () => {
 					});
 			});
 	});
+	test("*: /api/invalid should respond with 404 not found if requesting an invalid endpoint", () => {
+		return request(app)
+			.get("/api/invalid")
+			.expect(404)
+			.then((response) => {
+				const { msg } = response.body;
+				expect(msg).toBe(
+					"Not Found. /api/invalid is not a valid endpoint. try /api/"
+				);
+			});
+	});
 });
 describe("/topics", () => {
-	test("GET: 200 should respond with status code 200", () => {
-		return request(app).get("/api/topics").expect(200);
-	});
-	test("GET: should respond with an array of topic objects, each of which should have the following properties: slug, description", () => {
+	test("GET: 200 should respond with an array of topic objects, each of which should have the following properties: slug, description", () => {
 		return request(app)
 			.get("/api/topics")
 			.expect(200)
 			.then((response) => {
 				const { topics } = response.body;
-				expect(Array.isArray(topics)).toBe(true);
+				expect(topics.length).toBe(3);
 				topics.forEach((topic) => {
 					expect(topic).toHaveProperty("slug", expect.any(String));
 					expect(topic).toHaveProperty(
