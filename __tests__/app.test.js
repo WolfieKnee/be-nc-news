@@ -178,7 +178,7 @@ describe("/api", () => {
 				});
 		});
 
-		describe.only("comments by :article_id", () => {
+		describe("comments by :article_id", () => {
 			test("GET: 200 /:article_id/comments should respond with an array of all the comments on the given article ", () => {
 				return request(app)
 					.get("/api/articles/1/comments")
@@ -225,6 +225,25 @@ describe("/api", () => {
 						});
 					});
 			});
+			test("GET: 400 /invalid/comments should respond with Bar Request", () => {
+				return request(app)
+					.get("/api/articles/invalid/comments")
+					.expect(400)
+					.then((response) => {
+						const { msg } = response.body;
+						expect(msg).toBe("Bad Request");
+					});
+			});
+			test("GET: 404 /222/comments should respond with Not Found", () => {
+				return request(app)
+					.get("/api/articles/222/comments")
+					.expect(404)
+					.then((response) => {
+						const { msg } = response.body;
+						expect(msg).toBe("Not Found");
+					});
+			});
+			// allow [] for article with no comments
 		});
 	});
 });
