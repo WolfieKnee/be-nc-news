@@ -52,7 +52,7 @@ describe("/api", () => {
 				});
 		});
 	});
-	describe.only("/articles", () => {
+	describe("/articles", () => {
 		test("GET: 200 /:article_id should respond with an article object with the associated properties.", () => {
 			const expected = {
 				article_id: 1,
