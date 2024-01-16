@@ -7,6 +7,13 @@ const seed = require("../db/seeds/seed");
 beforeEach(() => seed(data));
 afterAll(() => db.end());
 
+let consoleSpy = null;
+beforeAll(() => {
+	consoleSpy = jest.spyOn(console, "log");
+});
+
+afterAll(() => consoleSpy.mockRestore());
+
 describe("/api", () => {
 	test("GET: 200 should respond with an object describing all the available endpoints on this API", () => {
 		return request(app)
@@ -171,7 +178,11 @@ describe("/api", () => {
 					});
 				});
 		});
-		// 404: not found?
-		// 400: bad request?
+	});
+});
+
+describe("spying on console log", () => {
+	test("console log has not been called", () => {
+		expect(consoleSpy).not.toHaveBeenCalled();
 	});
 });
