@@ -16,3 +16,14 @@ exports.fetchArticleById = (article_id) => {
 			}
 		});
 };
+
+exports.fetchArticles = () => {
+	return db
+		.query(
+			`SELECT * FROM articles
+		ORDER BY created_at DESC`
+		)
+		.then((results) => {
+			return results.rows;
+		});
+};
