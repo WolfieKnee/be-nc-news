@@ -10,7 +10,7 @@ const {
 	handlePsqlErrors,
 	handleServerErrors,
 	handleBadEndpoint,
-} = require("./models/errors");
+} = require("./errors");
 
 const app = express();
 
