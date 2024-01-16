@@ -3,6 +3,7 @@ const request = require("supertest");
 const db = require("../db/connection");
 const data = require("../db/data/test-data");
 const seed = require("../db/seeds/seed");
+const { expect } = require("@jest/globals");
 
 beforeEach(() => seed(data));
 afterAll(() => db.end());
@@ -175,6 +176,55 @@ describe("/api", () => {
 						}
 					});
 				});
+		});
+
+		describe.only("comments by :article_id", () => {
+			test("GET: 200 /:article_id/comments should respond with an array of all the comments on the given article ", () => {
+				return request(app)
+					.get("/api/articles/1/comments")
+					.expect(200)
+					.then((response) => {
+						const { comments } = response.body;
+						expect(comments.length).toBe(11);
+						comments.forEach((comment) => {
+							expect(comment).toHaveProperty(
+								"comment_id",
+								expect.any(Number)
+							);
+							expect(comment).toHaveProperty(
+								"votes",
+								expect.any(Number)
+							);
+							expect(comment).toHaveProperty(
+								"created_at",
+								expect.any(String)
+							);
+							expect(comment).toHaveProperty(
+								"author",
+								expect.any(String)
+							);
+							expect(comment).toHaveProperty(
+								"body",
+								expect.any(String)
+							);
+							expect(comment).toHaveProperty(
+								"article_id",
+								expect.any(Number)
+							);
+						});
+					});
+			});
+			test("GET: 200 comments should be served the with most recent first", () => {
+				return request(app)
+					.get("/api/articles/1/comments")
+					.expect(200)
+					.then((response) => {
+						const { comments } = response.body;
+						expect(comments).toBeSortedBy("created_at", {
+							descending: true,
+						});
+					});
+			});
 		});
 	});
 });

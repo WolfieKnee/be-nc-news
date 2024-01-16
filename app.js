@@ -11,6 +11,9 @@ const {
 	handleServerErrors,
 	handleBadEndpoint,
 } = require("./errors");
+const {
+	getCommentsByArticleId,
+} = require("./controllers/comments.controllers");
 
 const app = express();
 
@@ -18,6 +21,7 @@ app.get("/api/topics", getTopics);
 app.get("/api", getEndpoints);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles", getArticles);
+app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 app.all("/api/*", handleBadEndpoint);
 app.use(handleCustomErrors);
