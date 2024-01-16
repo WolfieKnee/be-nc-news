@@ -9,12 +9,12 @@ exports.fetchCommentsByArticleId = (article_id) => {
 			[article_id]
 		)
 		.then((results) => {
-			if (results.rows.length === 0) {
-				return Promise.reject({
-					msg: "requested article does not exist",
-				});
-			} else {
-				return results.rows;
-			}
+			// if (results.rows.length === 0) {
+			// 	return Promise.reject({
+			// 		msg: "requested article does not exist",
+			// 	});
+			// } else {
+			return results.rows;
+			// }
 		});
 };

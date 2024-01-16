@@ -243,7 +243,15 @@ describe("/api", () => {
 						expect(msg).toBe("Not Found");
 					});
 			});
-			// allow [] for article with no comments
+			test("GET: 200 /2/comments should respond with an empty array", () => {
+				return request(app)
+					.get("/api/articles/2/comments")
+					.expect(200)
+					.then((response) => {
+						const { comments } = response.body;
+						expect(comments.length).toBe(0);
+					});
+			});
 		});
 	});
 });
