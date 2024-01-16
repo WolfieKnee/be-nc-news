@@ -93,7 +93,7 @@ describe("/api", () => {
 					expect(msg).toBe("Not Found");
 				});
 		});
-		test("GET: 200 / should respond with an array of article objects with the defined properties, _except_ comment_count", () => {
+		test("GET: 200 / should respond with an array of article objects with the defined properties, _not including_ comment_count", () => {
 			return request(app)
 				.get("/api/articles/")
 				.expect(200)
@@ -143,7 +143,7 @@ describe("/api", () => {
 					});
 				});
 		});
-		test(" GET: 200 / articles should be sorted by date, descending", () => {
+		test("GET: 200 / articles should be sorted by date, descending", () => {
 			return request(app)
 				.get("/api/articles/")
 				.expect(200)
@@ -154,8 +154,24 @@ describe("/api", () => {
 					});
 				});
 		});
+		test("GET: 200 / articles should include the comment count ", () => {
+			return request(app)
+				.get("/api/articles/")
+				.expect(200)
+				.then((response) => {
+					const { articles } = response.body;
+					articles.forEach((article) => {
+						expect(article).toHaveProperty(
+							"comment_count",
+							expect.any(String)
+						);
+						if (article.article_id === 1) {
+							expect(article.comment_count).toBe("11");
+						}
+					});
+				});
+		});
 		// 404: not found?
 		// 400: bad request?
-		// update endpoints.json
 	});
 });
