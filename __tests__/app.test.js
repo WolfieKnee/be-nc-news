@@ -7,11 +7,9 @@ const seed = require("../db/seeds/seed");
 beforeEach(() => seed(data));
 afterAll(() => db.end());
 
-let consoleSpy = null;
-beforeAll(() => {
+beforeEach(() => {
 	consoleSpy = jest.spyOn(console, "log");
 });
-
 afterAll(() => consoleSpy.mockRestore());
 
 describe("/api", () => {
