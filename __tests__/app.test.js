@@ -5,13 +5,15 @@ const data = require("../db/data/test-data");
 const seed = require("../db/seeds/seed");
 const { expect } = require("@jest/globals");
 
-beforeEach(() => seed(data));
-afterAll(() => db.end());
-
 beforeEach(() => {
 	consoleSpy = jest.spyOn(console, "log");
+	return seed(data);
 });
-afterAll(() => consoleSpy.mockRestore());
+
+afterAll(() => {
+	consoleSpy.mockRestore();
+	db.end();
+});
 
 describe("/api", () => {
 	test("GET: 200 should respond with an object describing all the available endpoints on this API", () => {
@@ -178,7 +180,7 @@ describe("/api", () => {
 				});
 		});
 
-		describe.only("comments by :article_id", () => {
+		describe("comments by :article_id", () => {
 			test("GET: 200 /:article_id/comments should respond with an array of all the comments on the given article ", () => {
 				return request(app)
 					.get("/api/articles/1/comments")
@@ -223,6 +225,33 @@ describe("/api", () => {
 						expect(comments).toBeSortedBy("created_at", {
 							descending: true,
 						});
+					});
+			});
+			test("GET: 400 /invalid/comments should respond with Bar Request", () => {
+				return request(app)
+					.get("/api/articles/invalid/comments")
+					.expect(400)
+					.then((response) => {
+						const { msg } = response.body;
+						expect(msg).toBe("Bad Request");
+					});
+			});
+			test("GET: 404 /222/comments should respond with Not Found", () => {
+				return request(app)
+					.get("/api/articles/222/comments")
+					.expect(404)
+					.then((response) => {
+						const { msg } = response.body;
+						expect(msg).toBe("Not Found");
+					});
+			});
+			test("GET: 200 /2/comments should respond with an empty array", () => {
+				return request(app)
+					.get("/api/articles/2/comments")
+					.expect(200)
+					.then((response) => {
+						const { comments } = response.body;
+						expect(comments.length).toBe(0);
 					});
 			});
 		});
