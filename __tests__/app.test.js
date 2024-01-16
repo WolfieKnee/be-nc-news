@@ -5,13 +5,15 @@ const data = require("../db/data/test-data");
 const seed = require("../db/seeds/seed");
 const { expect } = require("@jest/globals");
 
-beforeEach(() => seed(data));
-afterAll(() => db.end());
-
 beforeEach(() => {
 	consoleSpy = jest.spyOn(console, "log");
+	return seed(data);
 });
-afterAll(() => consoleSpy.mockRestore());
+
+afterAll(() => {
+	consoleSpy.mockRestore();
+	db.end();
+});
 
 describe("/api", () => {
 	test("GET: 200 should respond with an object describing all the available endpoints on this API", () => {
