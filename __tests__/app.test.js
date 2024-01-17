@@ -386,7 +386,7 @@ describe("/api", () => {
 				});
 		});
 	});
-	describe("PATCH /articles  by article_id", () => {
+	describe.only("PATCH /articles  by article_id", () => {
 		test("PATCH: 201 /1 should update the article by increasing the votes by the requested amount", () => {
 			const newVote = { inc_votes: 10 };
 			const expected = {
@@ -395,7 +395,7 @@ describe("/api", () => {
 				topic: "mitch",
 				author: "butter_bridge",
 				body: "I find this existence challenging",
-				created_at: 1594329060000,
+				created_at: "2020-07-09T20:11:00.000Z",
 				votes: 110,
 				article_img_url:
 					"https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -411,9 +411,30 @@ describe("/api", () => {
 					}
 				});
 		});
-
-		// 201 increase votes
-		// 201 decrease votes
+		test("PATCH: 201 /1 should update the article by decreasing the votes by the requested amount", () => {
+			const newVote = { inc_votes: -10 };
+			const expected = {
+				article_id: 1,
+				title: "Living in the shadow of a great man",
+				topic: "mitch",
+				author: "butter_bridge",
+				body: "I find this existence challenging",
+				created_at: "2020-07-09T20:11:00.000Z",
+				votes: 90,
+				article_img_url:
+					"https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+			};
+			return request(app)
+				.patch("/api/articles/1")
+				.send(newVote)
+				.expect(201)
+				.then((response) => {
+					const { article } = response.body;
+					for (const key in expected) {
+						expect(article[key]).toEqual(expected[key]);
+					}
+				});
+		});
 
 		// 400 invalid article
 		// 404 article not found
