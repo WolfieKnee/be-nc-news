@@ -39,7 +39,7 @@ describe("/api", () => {
 				);
 			});
 	});
-	describe("/topics", () => {
+	describe("GET /topics", () => {
 		test("GET: 200 should respond with an array of topic objects, each of which should have the following properties: slug, description", () => {
 			return request(app)
 				.get("/api/topics")
@@ -60,7 +60,7 @@ describe("/api", () => {
 				});
 		});
 	});
-	describe("/articles", () => {
+	describe("GET /articles", () => {
 		describe("GET by :article_id", () => {
 			test("GET: 200 /:article_id should respond with an article object with the associated properties.", () => {
 				const expected = {
@@ -505,6 +505,28 @@ describe("/api", () => {
 				.then((response) => {
 					const { msg } = response.body;
 					expect(msg).toBe("Not Found");
+				});
+		});
+	});
+	describe("GET /users", () => {
+		test("GET: 200 /users should return and array of user objects with the specified properties", () => {
+			return request(app)
+				.get("/api/users")
+				.expect(200)
+				.then((response) => {
+					const { users } = response.body;
+					expect(users.length).toBe(4);
+					users.forEach((user) => {
+						expect(user).toHaveProperty(
+							"username",
+							expect.any(String)
+						);
+						expect(user).toHaveProperty("name", expect.any(String));
+						expect(user).toHaveProperty(
+							"avatar_url",
+							expect.any(String)
+						);
+					});
 				});
 		});
 	});
