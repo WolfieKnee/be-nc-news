@@ -69,7 +69,7 @@ describe("/api", () => {
 					topic: "mitch",
 					author: "butter_bridge",
 					body: "I find this existence challenging",
-					created_at: 1594329060000,
+					created_at: "2020-07-09T20:11:00.000Z",
 					votes: 100,
 					article_img_url:
 						"https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -80,7 +80,7 @@ describe("/api", () => {
 					.then((response) => {
 						const { article } = response.body;
 						for (const key in expected) {
-							expect(article.key).toEqual(expected.key);
+							expect(article[key]).toEqual(expected[key]);
 						}
 					});
 			});
@@ -258,7 +258,7 @@ describe("/api", () => {
 			});
 		});
 	});
-	describe("POST comments by article_id", () => {
+	describe("POST /articles comment by article_id", () => {
 		test("POST: 201 /1/comments should add the comment and respond with the new comment", () => {
 			const newComment = {
 				username: "butter_bridge",
@@ -385,6 +385,42 @@ describe("/api", () => {
 					);
 				});
 		});
+	});
+	describe("PATCH /articles  by article_id", () => {
+		test("PATCH: 201 /1 should update the article by increasing the votes by the requested amount", () => {
+			const newVote = { inc_votes: 10 };
+			const expected = {
+				article_id: 1,
+				title: "Living in the shadow of a great man",
+				topic: "mitch",
+				author: "butter_bridge",
+				body: "I find this existence challenging",
+				created_at: 1594329060000,
+				votes: 110,
+				article_img_url:
+					"https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+			};
+			return request(app)
+				.patch("/api/articles/1")
+				.send(newVote)
+				.expect(201)
+				.then((response) => {
+					const { article } = response.body;
+					for (const key in expected) {
+						expect(article[key]).toEqual(expected[key]);
+					}
+				});
+		});
+
+		// 201 increase votes
+		// 201 decrease votes
+
+		// 400 invalid article
+		// 404 article not found
+
+		// 400 bad patch data
+
+		// update endpoint.json
 	});
 });
 
