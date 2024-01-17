@@ -41,11 +41,27 @@
 		}
 	},
 	"GET /api/articles/:aticle_id/comments": {
-		"description": "server an array of comments for the requested article_id",
+		"description": "serves an array of comments for the requested article_id",
 		"queries": [],
 		"exampleResponse": {
 			"comment_id": 12,
 			"body": "Massive intercranial brain haemorrhage",
+			"article_id": 1,
+			"author": "icellusedkars",
+			"votes": 0,
+			"created_at": "2020-03-02T07:10:00.000Z"
+		}
+	},
+	"POST /api/articles/:article_id/comments": {
+		"description": "adds a comment on the given article_id",
+		"queries": [],
+		"exampleRequest": {
+			"author": "icellusedkars",
+			"body": "Mitch for President"
+		},
+		"exampleResponse": {
+			"comment_id": 22,
+			"body": "Mitch for President",
 			"article_id": 1,
 			"author": "icellusedkars",
 			"votes": 0,
