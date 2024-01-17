@@ -9,12 +9,22 @@ exports.fetchCommentsByArticleId = (article_id) => {
 			[article_id]
 		)
 		.then((results) => {
-			// if (results.rows.length === 0) {
-			// 	return Promise.reject({
-			// 		msg: "requested article does not exist",
-			// 	});
-			// } else {
 			return results.rows;
-			// }
+		});
+};
+
+exports.insertCommentByArticleId = (article_id, newComment) => {
+	// console.log(article_id, "<< article_id in model");
+	// console.log(newComment, "<< newComment in model");
+	return db
+		.query(
+			`INSERT INTO comments
+		(author, body, article_id)
+		VALUES($1, $2, $3)
+		RETURNING *`,
+			[newComment.username, newComment.body, article_id]
+		)
+		.then((result) => {
+			return result.rows[0];
 		});
 };
