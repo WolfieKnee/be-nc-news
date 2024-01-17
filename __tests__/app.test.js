@@ -69,7 +69,7 @@ describe("/api", () => {
 					topic: "mitch",
 					author: "butter_bridge",
 					body: "I find this existence challenging",
-					created_at: 1594329060000,
+					created_at: "2020-07-09T20:11:00.000Z",
 					votes: 100,
 					article_img_url:
 						"https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -80,7 +80,7 @@ describe("/api", () => {
 					.then((response) => {
 						const { article } = response.body;
 						for (const key in expected) {
-							expect(article.key).toEqual(expected.key);
+							expect(article[key]).toEqual(expected[key]);
 						}
 					});
 			});
@@ -258,7 +258,7 @@ describe("/api", () => {
 			});
 		});
 	});
-	describe("POST comments by article_id", () => {
+	describe("POST /articles comment by article_id", () => {
 		test("POST: 201 /1/comments should add the comment and respond with the new comment", () => {
 			const newComment = {
 				username: "butter_bridge",
@@ -383,6 +383,100 @@ describe("/api", () => {
 						"created_at",
 						expect.any(String)
 					);
+				});
+		});
+	});
+	describe("PATCH /articles  by article_id", () => {
+		test("PATCH: 201 /1 should update the article by increasing the votes by the requested amount", () => {
+			const newVote = { inc_votes: 10 };
+			const expected = {
+				article_id: 1,
+				title: "Living in the shadow of a great man",
+				topic: "mitch",
+				author: "butter_bridge",
+				body: "I find this existence challenging",
+				created_at: "2020-07-09T20:11:00.000Z",
+				votes: 110,
+				article_img_url:
+					"https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+			};
+			return request(app)
+				.patch("/api/articles/1")
+				.send(newVote)
+				.expect(201)
+				.then((response) => {
+					const { article } = response.body;
+					for (const key in expected) {
+						expect(article[key]).toEqual(expected[key]);
+					}
+				});
+		});
+		test("PATCH: 201 /1 should update the article by decreasing the votes by the requested amount", () => {
+			const newVote = { inc_votes: -10 };
+			const expected = {
+				article_id: 1,
+				title: "Living in the shadow of a great man",
+				topic: "mitch",
+				author: "butter_bridge",
+				body: "I find this existence challenging",
+				created_at: "2020-07-09T20:11:00.000Z",
+				votes: 90,
+				article_img_url:
+					"https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+			};
+			return request(app)
+				.patch("/api/articles/1")
+				.send(newVote)
+				.expect(201)
+				.then((response) => {
+					const { article } = response.body;
+					for (const key in expected) {
+						expect(article[key]).toEqual(expected[key]);
+					}
+				});
+		});
+		test("PATCH: 400 /invalid should respond with Bad Request", () => {
+			const newVote = { inc_votes: -10 };
+			return request(app)
+				.patch("/api/articles/invalid")
+				.send(newVote)
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
+				});
+		});
+		test("PATCH: 404 /222 should respond with Not Found if article doesn't exist", () => {
+			const newVote = { inc_votes: -10 };
+			return request(app)
+				.patch("/api/articles/222")
+				.send(newVote)
+				.expect(404)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Not Found");
+				});
+		});
+		test("PATCH: 400 /1 should respond with Bad Request if sent empty patch body", () => {
+			const newVote = {};
+			return request(app)
+				.patch("/api/articles/1")
+				.send(newVote)
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
+				});
+		});
+		test("PATCH: 400 /1 should respond with Bad Request if sent invalid patch body", () => {
+			const newVote = { inc_votes: "invalid" };
+			return request(app)
+				.patch("/api/articles/1")
+				.send(newVote)
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
 				});
 		});
 	});
