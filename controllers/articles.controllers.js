@@ -24,10 +24,14 @@ exports.getArticles = (req, res) => {
 	});
 };
 
-exports.patchArticleByArticleId = (req, res) => {
+exports.patchArticleByArticleId = (req, res, next) => {
 	const { article_id } = req.params;
 	const newVote = req.body.inc_votes;
-	updateArticleByArticleId(article_id, newVote).then((article) => {
-		return res.status(201).send({ article });
-	});
+	updateArticleByArticleId(article_id, newVote)
+		.then((article) => {
+			return res.status(201).send({ article });
+		})
+		.catch((err) => {
+			next(err);
+		});
 };

@@ -435,13 +435,50 @@ describe("/api", () => {
 					}
 				});
 		});
-
-		// 400 invalid article
-		// 404 article not found
-
-		// 400 bad patch data
-
-		// update endpoint.json
+		test("PATCH: 400 /invalid should respond with Bad Request", () => {
+			const newVote = { inc_votes: -10 };
+			return request(app)
+				.patch("/api/articles/invalid")
+				.send(newVote)
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
+				});
+		});
+		test("PATCH: 404 /222 should respond with Not Found if article doesn't exist", () => {
+			const newVote = { inc_votes: -10 };
+			return request(app)
+				.patch("/api/articles/222")
+				.send(newVote)
+				.expect(404)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Not Found");
+				});
+		});
+		test("PATCH: 400 /1 should respond with Bad Request if sent empty patch body", () => {
+			const newVote = {};
+			return request(app)
+				.patch("/api/articles/1")
+				.send(newVote)
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
+				});
+		});
+		test("PATCH: 400 /1 should respond with Bad Request if sent invalid patch body", () => {
+			const newVote = { inc_votes: "invalid" };
+			return request(app)
+				.patch("/api/articles/1")
+				.send(newVote)
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
+				});
+		});
 	});
 });
 

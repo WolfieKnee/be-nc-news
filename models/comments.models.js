@@ -14,8 +14,6 @@ exports.fetchCommentsByArticleId = (article_id) => {
 };
 
 exports.insertCommentByArticleId = (article_id, newComment) => {
-	// console.log(article_id, "<< article_id in model");
-	// console.log(newComment, "<< newComment in model");
 	return db
 		.query(
 			`INSERT INTO comments

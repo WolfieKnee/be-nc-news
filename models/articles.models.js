@@ -41,6 +41,12 @@ exports.updateArticleByArticleId = (article_id, newVote) => {
 			[newVote, article_id]
 		)
 		.then((results) => {
-			return results.rows[0];
+			if (results.rows.length === 0) {
+				return Promise.reject({
+					msg: "requested article does not exist",
+				});
+			} else {
+				return results.rows[0];
+			}
 		});
 };
