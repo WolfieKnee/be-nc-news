@@ -22,7 +22,11 @@ exports.getCommentsByArticleId = (req, res, next) => {
 exports.postCommentByArticleId = (req, res, next) => {
 	const { article_id } = req.params;
 	const newComment = req.body;
-	insertCommentByArticleId(article_id, newComment).then((comment) => {
-		res.status(201).send({ comment });
-	});
+	insertCommentByArticleId(article_id, newComment)
+		.then((comment) => {
+			res.status(201).send({ comment });
+		})
+		.catch((err) => {
+			next(err);
+		});
 };

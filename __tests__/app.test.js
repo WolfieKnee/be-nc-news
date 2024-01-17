@@ -229,7 +229,7 @@ describe("/api", () => {
 						});
 					});
 			});
-			test("GET: 400 /invalid/comments should respond with Bar Request", () => {
+			test("GET: 400 /invalid/comments should respond with Bad Request", () => {
 				return request(app)
 					.get("/api/articles/invalid/comments")
 					.expect(400)
@@ -258,11 +258,113 @@ describe("/api", () => {
 			});
 		});
 	});
-	describe.only("POST comments by article_id", () => {
+	describe("POST comments by article_id", () => {
 		test("POST: 201 /1/comments should add the comment and respond with the new comment", () => {
 			const newComment = {
 				username: "butter_bridge",
 				body: "Mitch for President",
+			};
+			return request(app)
+				.post("/api/articles/1/comments")
+				.send(newComment)
+				.expect(201)
+				.then((response) => {
+					const { comment } = response.body;
+					expect(comment.body).toBe("Mitch for President");
+					expect(comment.author).toBe("butter_bridge");
+					expect(comment.votes).toBe(0);
+					expect(comment).toHaveProperty(
+						"article_id",
+						expect.any(Number)
+					);
+					expect(comment).toHaveProperty(
+						"created_at",
+						expect.any(String)
+					);
+				});
+		});
+		test("POST: 400 /invalid/comments should return Bad Request", () => {
+			const newComment = {
+				username: "butter_bridge",
+				body: "Mitch for President",
+			};
+			return request(app)
+				.post("/api/articles/invalid/comments")
+				.send(newComment)
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
+				});
+		});
+		test("POST: 404 /222/comments should return Not Found for non-existant article", () => {
+			const newComment = {
+				username: "butter_bridge",
+				body: "Mitch for President",
+			};
+			return request(app)
+				.post("/api/articles/222/comments")
+				.send(newComment)
+				.expect(404)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Not Found");
+				});
+		});
+		test("POST: 404 /1/comments with invalid author should return Not Found", () => {
+			const newComment = {
+				username: "invalid",
+				body: "Mitch for President",
+			};
+			return request(app)
+				.post("/api/articles/1/comments")
+				.send(newComment)
+				.expect(404)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Not Found");
+				});
+		});
+		test("POST: 400 /1/comments with missing comment-body should return Bad Request", () => {
+			const newComment = {
+				username: "butter_bridge",
+			};
+			return request(app)
+				.post("/api/articles/1/comments")
+				.send(newComment)
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
+				});
+		});
+		test("POST: 400 /1/comments with missing author should return Bad Request", () => {
+			const newComment = {
+				body: "Mitch for President",
+			};
+			return request(app)
+				.post("/api/articles/1/comments")
+				.send(newComment)
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
+				});
+		});
+		test("POST: 400 /1/comments with missing post-body should return Bad Request", () => {
+			return request(app)
+				.post("/api/articles/1/comments")
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
+				});
+		});
+		test("POST: 201 /1/comments with extra properties in the post should add the comment and respond with the new comment", () => {
+			const newComment = {
+				username: "butter_bridge",
+				body: "Mitch for President",
+				randomKey: "invalid",
 			};
 			return request(app)
 				.post("/api/articles/1/comments")
