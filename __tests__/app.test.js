@@ -489,9 +489,24 @@ describe("/api", () => {
 					expect(response.body).toEqual({});
 				});
 		});
-		// add to endpoints.json
-		// 400 bad request
-		// 404 not found
+		test("DELETE: 400 /comments/invalid respond with Bad Request", () => {
+			return request(app)
+				.delete("/api/comments/invalid")
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
+				});
+		});
+		test("DELETE: 404 /comments/222 respond with Not Found", () => {
+			return request(app)
+				.delete("/api/comments/222")
+				.expect(404)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Not Found");
+				});
+		});
 	});
 });
 
