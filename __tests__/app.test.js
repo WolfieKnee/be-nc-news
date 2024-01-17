@@ -386,7 +386,7 @@ describe("/api", () => {
 				});
 		});
 	});
-	describe.only("PATCH /articles  by article_id", () => {
+	describe("PATCH /articles  by article_id", () => {
 		test("PATCH: 201 /1 should update the article by increasing the votes by the requested amount", () => {
 			const newVote = { inc_votes: 10 };
 			const expected = {
