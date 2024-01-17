@@ -16,7 +16,8 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res) => {
-	fetchArticles().then((articles) => {
+	const { topic = "" } = req.query;
+	fetchArticles(topic).then((articles) => {
 		articles.forEach((article) => {
 			return delete article.body;
 		});

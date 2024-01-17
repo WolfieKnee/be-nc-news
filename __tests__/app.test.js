@@ -184,6 +184,53 @@ describe("/api", () => {
 					});
 			});
 		});
+		describe("GET articles by ?topic", () => {
+			test("GET: 200 ?topic=slug should response with an array of all articles with the specified topic", () => {
+				return request(app)
+					.get("/api/articles?topic=mitch")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles.length).toBe(12);
+						articles.forEach((article) => {
+							expect(article).toHaveProperty(
+								"author",
+								expect.any(String)
+							);
+							expect(article).toHaveProperty(
+								"title",
+								expect.any(String)
+							);
+							expect(article).toHaveProperty(
+								"article_id",
+								expect.any(Number)
+							);
+							expect(article).toHaveProperty(
+								"topic",
+								expect.any(String)
+							);
+							expect(article).toHaveProperty(
+								"created_at",
+								expect.any(String)
+							);
+							expect(article).toHaveProperty(
+								"votes",
+								expect.any(Number)
+							);
+							expect(article).toHaveProperty(
+								"article_img_url",
+								expect.any(String)
+							);
+							expect(article).toHaveProperty(
+								"comment_count",
+								expect.any(String)
+							);
+						});
+					});
+			});
+			// 400 for an invalid query
+			// 404 if topic not found
+		});
 
 		describe("GET comments by :article_id", () => {
 			test("GET: 200 /:article_id/comments should respond with an array of all the comments on the given article ", () => {
