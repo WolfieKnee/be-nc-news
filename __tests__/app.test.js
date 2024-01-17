@@ -480,6 +480,19 @@ describe("/api", () => {
 				});
 		});
 	});
+	describe("DELETE /comments by comment_id", () => {
+		test("DELETE: 204 /comments/:comment_id should delete the specified comment and respond with no content", () => {
+			return request(app)
+				.delete("/api/comments/1")
+				.expect(204)
+				.then((response) => {
+					expect(response.body).toEqual({});
+				});
+		});
+		// add to endpoints.json
+		// 400 bad request
+		// 404 not found
+	});
 });
 
 describe("spying on console log", () => {
