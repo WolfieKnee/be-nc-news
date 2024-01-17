@@ -258,20 +258,20 @@ describe("/api", () => {
 			});
 		});
 	});
-	describe("POST comments by article_id", () => {
-		test.skip("POST: 201 /1/comments should add the comment and respond with the new comment", () => {
+	describe.only("POST comments by article_id", () => {
+		test("POST: 201 /1/comments should add the comment and respond with the new comment", () => {
 			const newComment = {
-				username: "Dr Dev",
+				username: "butter_bridge",
 				body: "Mitch for President",
 			};
 			return request(app)
-				.post("api/articles/1/comments")
+				.post("/api/articles/1/comments")
 				.send(newComment)
 				.expect(201)
 				.then((response) => {
 					const { comment } = response.body;
 					expect(comment.body).toBe("Mitch for President");
-					expect(comment.username).toBe("Dr Dev");
+					expect(comment.author).toBe("butter_bridge");
 					expect(comment.votes).toBe(0);
 					expect(comment).toHaveProperty(
 						"article_id",
