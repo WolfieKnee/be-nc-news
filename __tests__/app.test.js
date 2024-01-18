@@ -84,6 +84,17 @@ describe("/api", () => {
 						}
 					});
 			});
+
+			test("GET: 200 /:article_id should respond with an article object which includes a comment count", () => {
+				return request(app)
+					.get("/api/articles/1")
+					.expect(200)
+					.then((response) => {
+						const { article } = response.body;
+						expect(article.comment_count).toBe("11");
+					});
+			});
+
 			test("GET: 400 /invalid_id should respond with Bad Request", () => {
 				return request(app)
 					.get("/api/articles/invalid_id")
@@ -103,7 +114,6 @@ describe("/api", () => {
 					});
 			});
 		});
-
 		describe("GET articles", () => {
 			test("GET: 200 / should respond with an array of article objects with the defined properties, _not including_ comment_count", () => {
 				return request(app)
@@ -225,7 +235,6 @@ describe("/api", () => {
 					});
 			});
 		});
-
 		describe("GET comments by :article_id", () => {
 			test("GET: 200 /:article_id/comments should respond with an array of all the comments on the given article ", () => {
 				return request(app)
