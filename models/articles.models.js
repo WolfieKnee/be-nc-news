@@ -22,12 +22,11 @@ exports.fetchArticles = (topic) => {
 	let queryStr = `SELECT articles.*, COUNT(comments.comment_id) 
 	AS comment_count FROM articles LEFT OUTER JOIN comments 
 	ON comments.article_id = articles.article_id`;
-	if (topic.length) {
+	if (topic) {
 		queryValues.push(topic);
 		queryStr += ` WHERE topic = $1`;
 	}
-	queryStr += ` GROUP BY articles.article_id
-			ORDER BY created_at DESC`;
+	queryStr += ` GROUP BY articles.article_id ORDER BY created_at DESC`;
 	return db.query(queryStr, queryValues).then((results) => {
 		return results.rows;
 	});

@@ -6,6 +6,8 @@ exports.handleCustomErrors = (err, req, res, next) => {
 		err.msg === "no such comment"
 	) {
 		res.status(404).send({ msg: "Not Found" });
+	} else if (err.msg === "invalid query") {
+		res.status(400).send({ msg: "Bad Request" });
 	} else {
 		next(err);
 	}
@@ -23,14 +25,14 @@ exports.handlePsqlErrors = (err, req, res, next) => {
 };
 
 // Server errors
-exports.handleServerErrors = (err, req, res, next) => {
-	res.status(500).send({
-		message: "500 error! sorry, Dr Dev made a boo-boo",
-	});
-};
-
 exports.handleBadEndpoint = (req, res) => {
 	res.status(404).send({
 		msg: `Not Found. ${req.originalUrl} is not a valid endpoint. Try /api/`,
+	});
+};
+
+exports.handleServerErrors = (err, req, res, next) => {
+	res.status(500).send({
+		message: "500 error! sorry, Dr Dev made a boo-boo",
 	});
 };

@@ -193,43 +193,37 @@ describe("/api", () => {
 						const { articles } = response.body;
 						expect(articles.length).toBe(12);
 						articles.forEach((article) => {
-							expect(article).toHaveProperty(
-								"author",
-								expect.any(String)
-							);
-							expect(article).toHaveProperty(
-								"title",
-								expect.any(String)
-							);
-							expect(article).toHaveProperty(
-								"article_id",
-								expect.any(Number)
-							);
-							expect(article).toHaveProperty(
-								"topic",
-								expect.any(String)
-							);
-							expect(article).toHaveProperty(
-								"created_at",
-								expect.any(String)
-							);
-							expect(article).toHaveProperty(
-								"votes",
-								expect.any(Number)
-							);
-							expect(article).toHaveProperty(
-								"article_img_url",
-								expect.any(String)
-							);
-							expect(article).toHaveProperty(
-								"comment_count",
-								expect.any(String)
-							);
+							expect(article.topic).toBe("mitch");
 						});
 					});
 			});
-			// 400 for an invalid query
-			// 404 if topic not found
+			test("GET: 200 ?invalid=mitch should ignore the invalid query and just return all the articles", () => {
+				return request(app)
+					.get("/api/articles?invalid=mitch")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles.length).toBe(13);
+					});
+			});
+			test("GET: 404 ?topic=notATopic should response with Not Found", () => {
+				return request(app)
+					.get("/api/articles?topic=notATopic")
+					.expect(404)
+					.then((response) => {
+						const { msg } = response.body;
+						expect(msg).toBe("Not Found");
+					});
+			});
+			test("GET: 200 ?topic=paper should respond with empty array for a topic with no articles", () => {
+				return request(app)
+					.get("/api/articles?topic=paper")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles.length).toBe(0);
+					});
+			});
 		});
 
 		describe("GET comments by :article_id", () => {
