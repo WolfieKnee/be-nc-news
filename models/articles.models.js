@@ -1,4 +1,6 @@
 const db = require("../db/connection");
+const { checkTopicExists } = require("./models.utils");
+
 exports.fetchArticleById = (article_id) => {
 	return db
 		.query(
@@ -32,7 +34,7 @@ exports.fetchArticles = (topic, sort_by = "created_at", order = "DESC") => {
 		return Promise.reject({ msg: "invalid order query" });
 	}
 
-	let queryStr = `SELECT articles.*, COUNT(comments.comment_id) 
+	let queryStr = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) 
 	AS comment_count FROM articles LEFT OUTER JOIN comments 
 	ON comments.article_id = articles.article_id`;
 	if (topic) {
@@ -42,7 +44,14 @@ exports.fetchArticles = (topic, sort_by = "created_at", order = "DESC") => {
 	queryStr += ` GROUP BY articles.article_id `;
 	queryStr += ` ORDER BY ${sort_by} ${order}`;
 
-	return db.query(queryStr, queryValues).then((results) => {
+	const articlesQuery = db.query(queryStr, queryValues);
+	const queries = [articlesQuery];
+	if (topic) {
+		const topicExistsQuery = checkTopicExists(topic);
+		queries.push(topicExistsQuery);
+	}
+	return Promise.all(queries).then((resolvedQueries) => {
+		const results = resolvedQueries[0];
 		return results.rows;
 	});
 };
