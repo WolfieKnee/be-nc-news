@@ -4,6 +4,7 @@ const db = require("../db/connection");
 const data = require("../db/data/test-data");
 const seed = require("../db/seeds/seed");
 const { expect } = require("@jest/globals");
+const { forEach } = require("../db/data/test-data/articles");
 
 beforeEach(() => {
 	consoleSpy = jest.spyOn(console, "log");
@@ -114,7 +115,7 @@ describe("/api", () => {
 					});
 			});
 		});
-		describe("GET articles", () => {
+		describe.only("GET articles", () => {
 			test("GET: 200 / should respond with an array of article objects with the defined properties, _not including_ comment_count", () => {
 				return request(app)
 					.get("/api/articles/")
@@ -304,6 +305,87 @@ describe("/api", () => {
 					.then((response) => {
 						const { comments } = response.body;
 						expect(comments.length).toBe(0);
+					});
+			});
+		});
+		describe.only("GET articles sorted by the following queries: title, topic, author, date, votes", () => {
+			test("GET: 200 ?sort_by=title should serve the articles sorted by title, default descending", () => {
+				return request(app)
+					.get("/api/articles?sort_by=title")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles).toBeSortedBy("title", {
+							descending: true,
+						});
+					});
+			});
+			test("GET: 400 ?sort_by=invalid should return Bad Request", () => {
+				return request(app)
+					.get("/api/articles?sort_by=invalid")
+					.expect(400)
+					.then((response) => {
+						const { msg } = response.body;
+						expect(msg).toBe("Bad Request");
+					});
+			});
+			test("GET: 200 ?sort_by=topic should serve the articles sorted by topic, default descending", () => {
+				return request(app)
+					.get("/api/articles?sort_by=topic")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles).toBeSortedBy("topic", {
+							descending: true,
+						});
+					});
+			});
+			test("GET: 200 ?sort_by=author should serve the articles sorted by author, default descending", () => {
+				return request(app)
+					.get("/api/articles?sort_by=author")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles).toBeSortedBy("author", {
+							descending: true,
+						});
+					});
+			});
+			test("GET: 200 ?sort_by=created_at should serve the articles sorted by created_at, default descending", () => {
+				return request(app)
+					.get("/api/articles?sort_by=created_at")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles).toBeSortedBy("created_at", {
+							descending: true,
+						});
+					});
+			});
+			test("GET: 200 ?sort_by=votes should serve the articles sorted by votes, default descending", () => {
+				return request(app)
+					.get("/api/articles?sort_by=votes")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles).toBeSortedBy("votes", {
+							descending: true,
+						});
+					});
+			});
+			test("GET: 200 ?topic=mitch&sort_by=votes should serve the articles with topic of mitch, sorted by votes, default descending", () => {
+				return request(app)
+					.get("/api/articles?topic=mitch&sort_by=votes")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles.length).toBe(12);
+						expect(articles).toBeSortedBy("votes", {
+							descending: true,
+						});
+						articles.forEach((article) => {
+							expect(article.topic).toBe("mitch");
+						});
 					});
 			});
 		});
