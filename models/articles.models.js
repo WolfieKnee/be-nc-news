@@ -90,28 +90,16 @@ exports.insertArticle = (newArticle) => {
 	if (newArticle.article_img_url) {
 		queryStr += ` , article_img_url)
 		VALUES ($1, $2, $3, $4, $5)
-		RETURNING article_id `;
+		RETURNING * `;
 		queryValues.push(newArticle.article_img_url);
 	} else {
 		queryStr += ` )
 		VALUES ($1, $2, $3, $4)
-		RETURNING article_id `;
+		RETURNING *`;
 	}
 
-	return db
-		.query(queryStr, queryValues)
-		.then((results) => {
-			const { article_id } = results.rows[0];
-			return db.query(
-				`SELECT articles.*, COUNT(comments.comment_id) 
-				AS comment_count FROM articles LEFT OUTER JOIN comments 
-				ON comments.article_id = articles.article_id
-				WHERE articles.article_id = $1
-				GROUP BY articles.article_id`,
-				[article_id]
-			);
-		})
-		.then((results) => {
-			return results.rows[0];
-		});
+	return db.query(queryStr, queryValues).then((results) => {
+		const article = results.rows[0];
+		return { ...article, comment_count: "0" };
+	});
 };

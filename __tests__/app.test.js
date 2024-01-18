@@ -501,6 +501,9 @@ describe("/api", () => {
 					);
 				});
 		});
+		// 400 invalid req.body author
+		// 400 invalid req.body topic
+		// 400 invalid req.body article_img_url - BIG ASK to validate a url!
 	});
 	describe("POST /articles comment by article_id", () => {
 		test("POST: 201 /1/comments should add the comment and respond with the new comment", () => {
