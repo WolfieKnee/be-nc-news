@@ -3,6 +3,7 @@ const {
 	fetchArticles,
 	updateArticleByArticleId,
 } = require("../models/articles.models");
+const { checkTopicExists } = require("./controllers.utils");
 
 exports.getArticleById = (req, res, next) => {
 	const { article_id } = req.params;
@@ -15,13 +16,25 @@ exports.getArticleById = (req, res, next) => {
 		});
 };
 
-exports.getArticles = (req, res) => {
-	fetchArticles().then((articles) => {
-		articles.forEach((article) => {
-			return delete article.body;
+exports.getArticles = (req, res, next) => {
+	const { topic } = req.query;
+	const articlesQuery = fetchArticles(topic);
+	const queries = [articlesQuery];
+	if (topic) {
+		const topicExistsQuery = checkTopicExists(topic);
+		queries.push(topicExistsQuery);
+	}
+	Promise.all(queries)
+		.then((resolvedPromises) => {
+			const articles = resolvedPromises[0];
+			articles.forEach((article) => {
+				return delete article.body;
+			});
+			res.status(200).send({ articles: articles });
+		})
+		.catch((err) => {
+			next(err);
 		});
-		res.status(200).send({ articles: articles });
-	});
 };
 
 exports.patchArticleByArticleId = (req, res, next) => {

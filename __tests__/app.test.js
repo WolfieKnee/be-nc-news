@@ -184,6 +184,47 @@ describe("/api", () => {
 					});
 			});
 		});
+		describe("GET articles by ?topic", () => {
+			test("GET: 200 ?topic=slug should response with an array of all articles with the specified topic", () => {
+				return request(app)
+					.get("/api/articles?topic=mitch")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles.length).toBe(12);
+						articles.forEach((article) => {
+							expect(article.topic).toBe("mitch");
+						});
+					});
+			});
+			test("GET: 200 ?invalid=mitch should ignore the invalid query and just return all the articles", () => {
+				return request(app)
+					.get("/api/articles?invalid=mitch")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles.length).toBe(13);
+					});
+			});
+			test("GET: 404 ?topic=notATopic should response with Not Found", () => {
+				return request(app)
+					.get("/api/articles?topic=notATopic")
+					.expect(404)
+					.then((response) => {
+						const { msg } = response.body;
+						expect(msg).toBe("Not Found");
+					});
+			});
+			test("GET: 200 ?topic=paper should respond with empty array for a topic with no articles", () => {
+				return request(app)
+					.get("/api/articles?topic=paper")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles.length).toBe(0);
+					});
+			});
+		});
 
 		describe("GET comments by :article_id", () => {
 			test("GET: 200 /:article_id/comments should respond with an array of all the comments on the given article ", () => {

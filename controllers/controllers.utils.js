@@ -15,3 +15,19 @@ exports.checkArticleExists = (article_id) => {
 			}
 		});
 };
+
+exports.checkTopicExists = (topic_slug) => {
+	return db
+		.query(
+			`SELECT * FROM topics
+			WHERE slug = $1`,
+			[topic_slug]
+		)
+		.then((results) => {
+			if (results.rows.length === 0) {
+				return Promise.reject({
+					msg: "requested article does not exist",
+				});
+			}
+		});
+};
