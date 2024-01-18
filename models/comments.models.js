@@ -1,16 +1,20 @@
+const { checkArticleExists } = require("./models.utils");
 const db = require("../db/connection");
 
 exports.fetchCommentsByArticleId = (article_id) => {
-	return db
-		.query(
-			`SELECT * FROM comments
-        WHERE article_id = $1
-        ORDER BY created_at DESC`,
-			[article_id]
-		)
-		.then((results) => {
+	const fetchCommentsQuery = db.query(
+		`SELECT * FROM comments
+			WHERE article_id = $1
+			ORDER BY created_at DESC`,
+		[article_id]
+	);
+	const articleExistsQuery = checkArticleExists(article_id);
+	return Promise.all([fetchCommentsQuery, articleExistsQuery]).then(
+		(resolvedPromises) => {
+			const results = resolvedPromises[0];
 			return results.rows;
-		});
+		}
+	);
 };
 
 exports.insertCommentByArticleId = (article_id, newComment) => {
