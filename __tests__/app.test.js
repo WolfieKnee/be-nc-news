@@ -115,7 +115,7 @@ describe("/api", () => {
 					});
 			});
 		});
-		describe.only("GET articles", () => {
+		describe("GET articles", () => {
 			test("GET: 200 / should respond with an array of article objects with the defined properties, _not including_ comment_count", () => {
 				return request(app)
 					.get("/api/articles/")
@@ -308,7 +308,7 @@ describe("/api", () => {
 					});
 			});
 		});
-		describe.only("GET articles sorted by the following queries: title, topic, author, date, votes", () => {
+		describe("GET articles sorted by the following queries: title, topic, author, date, votes", () => {
 			test("GET: 200 ?sort_by=title should serve the articles sorted by title, default descending", () => {
 				return request(app)
 					.get("/api/articles?sort_by=title")
