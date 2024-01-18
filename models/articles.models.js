@@ -21,12 +21,15 @@ exports.fetchArticleById = (article_id) => {
 		});
 };
 
-exports.fetchArticles = (topic, sort_by = "created_at") => {
+exports.fetchArticles = (topic, sort_by = "created_at", order = "DESC") => {
 	const queryValues = [];
 	const validSortQuery = ["created_at", "title", "topic", "author", "votes"];
-
+	const validOrderQuery = ["DESC", "desc", "ASC", "asc"];
 	if (!validSortQuery.includes(sort_by)) {
 		return Promise.reject({ msg: "invalid sort query" });
+	}
+	if (!validOrderQuery.includes(order)) {
+		return Promise.reject({ msg: "invalid order query" });
 	}
 
 	let queryStr = `SELECT articles.*, COUNT(comments.comment_id) 
@@ -36,7 +39,8 @@ exports.fetchArticles = (topic, sort_by = "created_at") => {
 		queryValues.push(topic);
 		queryStr += ` WHERE topic = $1`;
 	}
-	queryStr += ` GROUP BY articles.article_id ORDER BY ${sort_by} DESC`;
+	queryStr += ` GROUP BY articles.article_id `;
+	queryStr += ` ORDER BY ${sort_by} ${order}`;
 
 	return db.query(queryStr, queryValues).then((results) => {
 		return results.rows;

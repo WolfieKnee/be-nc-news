@@ -389,6 +389,65 @@ describe("/api", () => {
 					});
 			});
 		});
+		describe("GET articles in the specified sort order", () => {
+			test("GET: 200 articles?order=asc should return all the articles in ascending order", () => {
+				return request(app)
+					.get("/api/articles?order=asc")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles).toBeSortedBy("created_at", {
+							ascending: true,
+						});
+					});
+			});
+			test("GET: 200 articles?order=ASC should return all the articles in ascending order", () => {
+				return request(app)
+					.get("/api/articles?order=ASC")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles).toBeSortedBy("created_at", {
+							ascending: true,
+						});
+					});
+			});
+			test("GET: 400 articles?order=invalid should return Bad Request", () => {
+				return request(app)
+					.get("/api/articles?order=invalid")
+					.expect(400)
+					.then((response) => {
+						const { msg } = response.body;
+						expect(msg).toBe("Bad Request");
+					});
+			});
+			test("GET: 200 articles?order=desc should return all the articles in descending order", () => {
+				return request(app)
+					.get("/api/articles?order=desc")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles).toBeSortedBy("created_at", {
+							descending: true,
+						});
+					});
+			});
+			test("GET: 200 articles?topic=mitch&sort_by=votes&order=asc should respond with specified article, correctly sorted", () => {
+				return request(app)
+					.get("/api/articles?topic=mitch&sort_by=votes&order=asc")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles.length).toBe(12);
+						expect(articles).toBeSortedBy("votes", {
+							ascending: true,
+						});
+						articles.forEach((article) => {
+							expect(article.topic).toBe("mitch");
+						});
+					});
+			});
+		});
 	});
 	describe("POST /articles comment by article_id", () => {
 		test("POST: 201 /1/comments should add the comment and respond with the new comment", () => {

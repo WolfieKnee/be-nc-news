@@ -6,7 +6,10 @@ exports.handleCustomErrors = (err, req, res, next) => {
 		err.msg === "no such comment"
 	) {
 		res.status(404).send({ msg: "Not Found" });
-	} else if (err.msg === "invalid sort query") {
+	} else if (
+		err.msg === "invalid sort query" ||
+		err.msg === "invalid order query"
+	) {
 		res.status(400).send({ msg: "Bad Request" });
 	} else {
 		next(err);
