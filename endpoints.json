@@ -56,8 +56,21 @@
 			"created_at": "2020-03-02T07:10:00.000Z"
 		}
 	},
+	"GET /api/users": {
+		"description": "serves an array of all users",
+		"queries": [],
+		"exampleResponse": {
+			"users": [
+				{
+					"username": "butter_bridge",
+					"name": "jonny",
+					"avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+				}
+			]
+		}
+	},
 	"POST /api/articles/:article_id/comments": {
-		"description": "adds a comment on the given article_id",
+		"description": "adds a comment on the given article_id and serves the new comment object",
 		"queries": [],
 		"exampleRequest": {
 			"author": "icellusedkars",
@@ -70,6 +83,31 @@
 			"author": "icellusedkars",
 			"votes": 0,
 			"created_at": "2020-03-02T07:10:00.000Z"
+		}
+	},
+	"POST /api/articles": {
+		"description": "adds a new article and serves the new article object. If not provided then the article_img_url will default to https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+		"queries": [],
+		"exampleRequest": {
+			"title": "Seafood substitutions are increasing",
+			"topic": "cooking",
+			"author": "weegembump",
+			"body": "Text from the article..",
+			"article_img_url": "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+		},
+		"exampleResponse": {
+			"articles": [
+				{
+					"title": "Seafood substitutions are increasing",
+					"topic": "cooking",
+					"author": "weegembump",
+					"body": "Text from the article..",
+					"created_at": "2018-05-30T15:59:13.341Z",
+					"votes": 0,
+					"comment_count": 0,
+					"article_img_url": "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+				}
+			]
 		}
 	},
 	"PATCH /api/articles/:article_id": {
@@ -90,18 +128,5 @@
 	"DELETE /api/comments/:comment_id": {
 		"description": "Deletes the given comment_id",
 		"queries": []
-	},
-	"GET /api/users": {
-		"description": "serves an array of all users",
-		"queries": [],
-		"exampleResponse": {
-			"users": [
-				{
-					"username": "butter_bridge",
-					"name": "jonny",
-					"avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
-				}
-			]
-		}
 	}
 }
