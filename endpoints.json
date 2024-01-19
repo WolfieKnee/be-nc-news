@@ -69,6 +69,17 @@
 			]
 		}
 	},
+	"GET /api/users:username": {
+		"description": "serves a object of the requested user",
+		"queries": [],
+		"exampleResponse": {
+			"user": {
+				"username": "butter_bridge",
+				"name": "jonny",
+				"avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+			}
+		}
+	},
 	"POST /api/articles/:article_id/comments": {
 		"description": "adds a comment on the given article_id and serves the new comment object",
 		"queries": [],
