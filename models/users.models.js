@@ -14,6 +14,12 @@ exports.fetchUserByUsername = (username) => {
 			[username]
 		)
 		.then((results) => {
-			return results.rows[0];
+			if (results.rows.length === 0) {
+				return Promise.reject({
+					msg: "requested user does not exist",
+				});
+			} else {
+				return results.rows[0];
+			}
 		});
 };

@@ -753,7 +753,7 @@ describe("/api", () => {
 				});
 		});
 	});
-	describe.only("GET /users", () => {
+	describe("GET /users", () => {
 		test("GET: 200 / should return and array of user objects with the specified properties", () => {
 			return request(app)
 				.get("/api/users")
@@ -787,9 +787,15 @@ describe("/api", () => {
 					expect(user.name).toBe("jonny");
 				});
 		});
-		// add to endpoints.json
-		// 400 invalid
-		// 404 not found
+		test("GET: 404 /noSuchUser respond with Bad Request", () => {
+			return request(app)
+				.get("/api/users/noSuchUser")
+				.expect(404)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Not Found");
+				});
+		});
 	});
 });
 
