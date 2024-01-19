@@ -64,7 +64,7 @@ describe("/api", () => {
 	describe("GET /articles", () => {
 		test("GET: 200 / should respond with an array of article objects with the defined properties, _not including_ comment_count", () => {
 			return request(app)
-				.get("/api/articles/")
+				.get("/api/articles")
 				.expect(200)
 				.then((response) => {
 					const { articles } = response.body;
@@ -103,7 +103,7 @@ describe("/api", () => {
 		});
 		test("GET: 200 / articles should not have a body property", () => {
 			return request(app)
-				.get("/api/articles/")
+				.get("/api/articles")
 				.expect(200)
 				.then((response) => {
 					const { articles } = response.body;
@@ -114,7 +114,7 @@ describe("/api", () => {
 		});
 		test("GET: 200 / articles should be sorted by date, descending", () => {
 			return request(app)
-				.get("/api/articles/")
+				.get("/api/articles")
 				.expect(200)
 				.then((response) => {
 					const { articles } = response.body;
@@ -125,7 +125,7 @@ describe("/api", () => {
 		});
 		test("GET: 200 / articles should include the comment count ", () => {
 			return request(app)
-				.get("/api/articles/")
+				.get("/api/articles")
 				.expect(200)
 				.then((response) => {
 					const { articles } = response.body;
@@ -456,6 +456,84 @@ describe("/api", () => {
 						});
 					});
 			});
+		});
+		describe("GET articles with pagination using limit and page queries", () => {
+			test("GET: 200 ?limit=5 should respond with an object containing an array of 5 article objects", () => {
+				return request(app)
+					.get("/api/articles?limit=5")
+					.expect(200)
+					.then((response) => {
+						const { articlesPage } = response.body.articles;
+						expect(articlesPage.length).toBe(5);
+					});
+			});
+			test("GET: 400 ?limit=invalid should respond Bad Request", () => {
+				return request(app)
+					.get("/api/articles?limit=invalid")
+					.expect(400)
+					.then((response) => {
+						const { msg } = response.body;
+						expect(msg).toBe("Bad Request");
+					});
+			});
+			test("GET: 200 ?sort_by=article_id&order=asc&limit=5 should respond with an array of the first 5 article objects", () => {
+				return request(app)
+					.get("/api/articles?sort_by=article_id&order=asc&limit=5")
+					.expect(200)
+					.then((response) => {
+						const { articlesPage } = response.body.articles;
+						expect(articlesPage.length).toBe(5);
+						expect(articlesPage[0].article_id).toBe(1);
+						expect(articlesPage[4].article_id).toBe(5);
+					});
+			});
+			test("GET: 200 ?sort_by=article_id&order=asc&limit=5&p=2 should respond with an array of the second 5 article objects", () => {
+				return request(app)
+					.get(
+						"/api/articles?sort_by=article_id&order=asc&limit=5&p=2"
+					)
+					.expect(200)
+					.then((response) => {
+						const { articlesPage } = response.body.articles;
+						expect(articlesPage.length).toBe(5);
+						expect(articlesPage[0].article_id).toBe(6);
+						expect(articlesPage[4].article_id).toBe(10);
+					});
+			});
+			test("GET: 400 ?limit=5&p=invalid should respond Bad Request", () => {
+				return request(app)
+					.get("/api/articles?limit=5&p=invalid")
+					.expect(400)
+					.then((response) => {
+						const { msg } = response.body;
+						expect(msg).toBe("Bad Request");
+					});
+			});
+			test("GET: 200 ?p=2 should respond with an array of all articles", () => {
+				return request(app)
+					.get("/api/articles?p=2")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles.length).toBe(13);
+					});
+			});
+			test("GET: 200 ?sort_by=article_id&order=asc&limit=2&p=3 should respond with an array of articles 5 & 6 and a total_count of articles", () => {
+				return request(app)
+					.get(
+						"/api/articles?sort_by=article_id&order=asc&limit=2&p=3"
+					)
+					.expect(200)
+					.then((response) => {
+						const { articlesPage } = response.body.articles;
+						const { total_count } = response.body.articles;
+						expect(articlesPage.length).toBe(2);
+						expect(articlesPage[0].article_id).toBe(5);
+						expect(articlesPage[1].article_id).toBe(6);
+						expect(total_count).toBe("13");
+					});
+			});
+			// add to endpoints.json
 		});
 	});
 	describe("POST /articles adds a new article", () => {
