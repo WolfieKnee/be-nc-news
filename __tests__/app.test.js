@@ -754,7 +754,7 @@ describe("/api", () => {
 		});
 	});
 	describe("GET /users", () => {
-		test("GET: 200 /users should return and array of user objects with the specified properties", () => {
+		test("GET: 200 / should return and array of user objects with the specified properties", () => {
 			return request(app)
 				.get("/api/users")
 				.expect(200)
@@ -772,6 +772,28 @@ describe("/api", () => {
 							expect.any(String)
 						);
 					});
+				});
+		});
+		test("GET: 200 /:username respond with the requested user object", () => {
+			return request(app)
+				.get("/api/users/butter_bridge")
+				.expect(200)
+				.then((response) => {
+					const { user } = response.body;
+					expect(user.username).toBe("butter_bridge");
+					expect(user.avatar_url).toBe(
+						"https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+					);
+					expect(user.name).toBe("jonny");
+				});
+		});
+		test("GET: 404 /noSuchUser respond with Bad Request", () => {
+			return request(app)
+				.get("/api/users/noSuchUser")
+				.expect(404)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Not Found");
 				});
 		});
 	});
