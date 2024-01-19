@@ -136,6 +136,19 @@
 			"article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
 		}
 	},
+	"PATCH /api/comments/:comment_id": {
+		"description": "Increments the votes on the given comment_id by the given amount, and serves with the updated article. Accepts +/-",
+		"queries": [],
+		"exampleRequest": { "newVote": 10 },
+		"exampleResponse": {
+			"comment_id": 1,
+			"body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+			"votes": 26,
+			"author": "butter_bridge",
+			"article_id": 9,
+			"created_at": "2020-04-06T12:17:00.000Z"
+		}
+	},
 	"DELETE /api/comments/:comment_id": {
 		"description": "Deletes the given comment_id",
 		"queries": []

@@ -41,7 +41,29 @@ exports.removeCommentById = (comment_id) => {
 		)
 		.then((result) => {
 			if (result.rows.length === 0) {
-				return Promise.reject({ msg: "no such comment" });
+				return Promise.reject({
+					msg: "requested comment does not exist",
+				});
+			}
+		});
+};
+
+exports.updateCommentById = (comment_id, newVote) => {
+	return db
+		.query(
+			`UPDATE comments
+			SET votes = votes + $1
+			WHERE comment_id = $2
+			RETURNING *`,
+			[newVote, comment_id]
+		)
+		.then((results) => {
+			if (results.rows.length === 0) {
+				return Promise.reject({
+					msg: "requested comment does not exist",
+				});
+			} else {
+				return results.rows[0];
 			}
 		});
 };

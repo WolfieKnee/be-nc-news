@@ -797,6 +797,94 @@ describe("/api", () => {
 				});
 		});
 	});
+	describe("PATCH /comments by comment_id", () => {
+		test("PATCH: 201 /1 should update the comment by increasing the votes by the requested amount", () => {
+			const newVote = { inc_votes: 10 };
+			const expected = {
+				comment_id: 1,
+				body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+				votes: 26,
+				author: "butter_bridge",
+				article_id: 9,
+				created_at: "2020-04-06T12:17:00.000Z",
+			};
+			return request(app)
+				.patch("/api/comments/1")
+				.send(newVote)
+				.expect(201)
+				.then((response) => {
+					const { comment } = response.body;
+					for (const key in expected) {
+						expect(comment[key]).toEqual(expected[key]);
+					}
+				});
+		});
+		test("PATCH: 201 /1 should update the comment by decreasing the votes by the requested amount", () => {
+			const newVote = { inc_votes: -10 };
+			const expected = {
+				comment_id: 1,
+				body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+				votes: 6,
+				author: "butter_bridge",
+				article_id: 9,
+				created_at: "2020-04-06T12:17:00.000Z",
+			};
+			return request(app)
+				.patch("/api/comments/1")
+				.send(newVote)
+				.expect(201)
+				.then((response) => {
+					const { comment } = response.body;
+					for (const key in expected) {
+						expect(comment[key]).toEqual(expected[key]);
+					}
+				});
+		});
+		test("PATCH: 400 /invalid should respond with Bad Request", () => {
+			const newVote = { inc_votes: -10 };
+			return request(app)
+				.patch("/api/comments/invalid")
+				.send(newVote)
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
+				});
+		});
+		test("PATCH: 404 /222 should respond with Not Found if article doesn't exist", () => {
+			const newVote = { inc_votes: -10 };
+			return request(app)
+				.patch("/api/comments/222")
+				.send(newVote)
+				.expect(404)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Not Found");
+				});
+		});
+		test("PATCH: 400 /1 should respond with Bad Request if sent empty patch body", () => {
+			const newVote = {};
+			return request(app)
+				.patch("/api/comments/1")
+				.send(newVote)
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
+				});
+		});
+		test("PATCH: 400 /1 should respond with Bad Request if sent invalid patch body", () => {
+			const newVote = { inc_votes: "invalid" };
+			return request(app)
+				.patch("/api/comments/1")
+				.send(newVote)
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
+				});
+		});
+	});
 });
 
 describe("spying on console log", () => {
