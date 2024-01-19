@@ -40,9 +40,13 @@ exports.patchArticleByArticleId = (req, res, next) => {
 		});
 };
 
-exports.postArticle = (req, res) => {
+exports.postArticle = (req, res, next) => {
 	const newArticle = req.body;
-	insertArticle(newArticle).then((article) => {
-		res.status(201).send({ article });
-	});
+	insertArticle(newArticle)
+		.then((article) => {
+			res.status(201).send({ article });
+		})
+		.catch((err) => {
+			next(err);
+		});
 };

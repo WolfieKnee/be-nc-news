@@ -4,7 +4,6 @@ exports.handleCustomErrors = (err, req, res, next) => {
 		err.msg === "unable to read the endpoints file" ||
 		err.msg === "requested article does not exist" ||
 		err.msg === "requested comment does not exist" ||
-		// err.msg === "no such comment" ||
 		err.msg === "requested user does not exist"
 	) {
 		res.status(404).send({ msg: "Not Found" });
