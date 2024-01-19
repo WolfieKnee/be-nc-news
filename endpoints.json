@@ -47,8 +47,8 @@
 		}
 	},
 	"GET /api/articles/:aticle_id/comments": {
-		"description": "serves an array of comments for the requested article_id",
-		"queries": [],
+		"description": "Serves an array of comments for the requested article_id. Can be paginated with limit and p(age), in which case the response will be an object with the an array of that page of articles and and total_count property.",
+		"queries": ["limit", "p"],
 		"exampleResponse": {
 			"comment_id": 12,
 			"body": "Massive intercranial brain haemorrhage",

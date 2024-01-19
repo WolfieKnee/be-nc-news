@@ -457,7 +457,7 @@ describe("/api", () => {
 					});
 			});
 		});
-		describe("GET articles with pagination using limit and page queries", () => {
+		describe("GET articles with pagination", () => {
 			test("GET: 200 ?limit=5 should respond with an object containing an array of 5 article objects", () => {
 				return request(app)
 					.get("/api/articles?limit=5")
@@ -533,7 +533,70 @@ describe("/api", () => {
 						expect(total_count).toBe("13");
 					});
 			});
-			// add to endpoints.json
+		});
+		describe("GET articles by :article_id with pagination", () => {
+			test("GET: 200 /:article_id/comments?limit=4 should respond with an object containing an array of the first 4 comments on the given article ", () => {
+				return request(app)
+					.get("/api/articles/1/comments?limit=4")
+					.expect(200)
+					.then((response) => {
+						const { commentsPage } = response.body.comments;
+						expect(commentsPage.length).toBe(4);
+						expect(commentsPage[0].comment_id).toBe(5);
+						expect(commentsPage[3].comment_id).toBe(13);
+					});
+			});
+			test("GET: 400 ?limit=invalid should respond Bad Request", () => {
+				return request(app)
+					.get("/api/articles/1/comments?limit=invalid")
+					.expect(400)
+					.then((response) => {
+						const { msg } = response.body;
+						expect(msg).toBe("Bad Request");
+					});
+			});
+			test("GET: 200 ?limit=5&p=2 should respond with an array of the second 5 article objects", () => {
+				return request(app)
+					.get("/api/articles/1/comments?limit=5&p=2")
+					.expect(200)
+					.then((response) => {
+						const { commentsPage } = response.body.comments;
+						expect(commentsPage.length).toBe(5);
+						expect(commentsPage[0].comment_id).toBe(8);
+						expect(commentsPage[4].comment_id).toBe(4);
+					});
+			});
+			test("GET: 400 ?limit=5&p=invalid should respond Bad Request", () => {
+				return request(app)
+					.get("/api/articles/1/comments?limit=5&p=invalid")
+					.expect(400)
+					.then((response) => {
+						const { msg } = response.body;
+						expect(msg).toBe("Bad Request");
+					});
+			});
+			test("GET: 200 ?p=2 should respond with an array of all comments", () => {
+				return request(app)
+					.get("/api/articles/1/comments?p=2")
+					.expect(200)
+					.then((response) => {
+						const { comments } = response.body;
+						expect(comments.length).toBe(11);
+					});
+			});
+			test("GET: 200 ?limit=2&p=3 should respond with an array of comments 5 & 6 and a total_count of articles", () => {
+				return request(app)
+					.get("/api/articles/1/comments?limit=2&p=3")
+					.expect(200)
+					.then((response) => {
+						const { commentsPage } = response.body.comments;
+						const { total_count } = response.body.comments;
+						expect(commentsPage.length).toBe(2);
+						expect(commentsPage[0].comment_id).toBe(7);
+						expect(commentsPage[1].comment_id).toBe(8);
+						expect(total_count).toBe("11");
+					});
+			});
 		});
 	});
 	describe("POST /articles adds a new article", () => {

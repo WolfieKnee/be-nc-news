@@ -85,8 +85,8 @@ exports.fetchArticles = (
 		if (resolvedQueries[1]) {
 			const totalCountResults = resolvedQueries[1].rows[0].count;
 			return {
-				articlesPage: articleResults,
 				total_count: totalCountResults,
+				articlesPage: articleResults,
 			};
 		} else {
 			return articleResults;

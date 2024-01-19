@@ -1,20 +1,45 @@
 const { checkArticleExists } = require("./models.utils");
 const db = require("../db/connection");
 
-exports.fetchCommentsByArticleId = (article_id) => {
-	const fetchCommentsQuery = db.query(
-		`SELECT * FROM comments
+exports.fetchCommentsByArticleId = (article_id, limit, page) => {
+	if ((limit && !Number(limit)) || (page && !Number(page))) {
+		return Promise.reject({ msg: "invalid pagination query" });
+	}
+
+	let queryStr = `SELECT * FROM comments
 			WHERE article_id = $1
-			ORDER BY created_at DESC`,
-		[article_id]
-	);
-	const articleExistsQuery = checkArticleExists(article_id);
-	return Promise.all([fetchCommentsQuery, articleExistsQuery]).then(
-		(resolvedPromises) => {
-			const results = resolvedPromises[0];
-			return results.rows;
+			ORDER BY created_at DESC`;
+	const queryValues = [article_id];
+
+	if (limit) {
+		queryStr += ` LIMIT ${limit} `;
+		if (page) {
+			queryStr += ` OFFSET ${page * limit - limit} `;
 		}
-	);
+	}
+	const fetchCommentsQuery = db.query(queryStr, queryValues);
+	const articleExistsQuery = checkArticleExists(article_id);
+	const queries = [fetchCommentsQuery];
+
+	if (limit) {
+		const totalCountQuery = db.query(
+			`SELECT count(*) FROM comments WHERE article_id = $1`,
+			[article_id]
+		);
+		queries.push(totalCountQuery);
+	}
+
+	queries.push(articleExistsQuery);
+
+	return Promise.all(queries).then((resolvedQueries) => {
+		const comments = resolvedQueries[0].rows;
+		if (resolvedQueries[1]) {
+			const totalCountResults = resolvedQueries[1].rows[0].count;
+			return { commentsPage: comments, total_count: totalCountResults };
+		} else {
+			return comments;
+		}
+	});
 };
 
 exports.insertCommentByArticleId = (article_id, newComment) => {
