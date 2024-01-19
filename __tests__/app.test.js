@@ -447,6 +447,62 @@ describe("/api", () => {
 			});
 		});
 	});
+	describe("POST /articles adds a new article", () => {
+		test("POST: 201 should post a new article and return the new article object. This test does not include comment_count", () => {
+			const newArticle = {
+				author: "icellusedkars",
+				title: "The best cheese",
+				body: "I love cheese, especially airedale airedale. Monterey jack rubber cheese cheese strings melted cheese port-salut camembert de normandie cream cheese red leicester. Emmental blue castello cheese and biscuits blue castello emmental macaroni cheese the big cheese croque monsieur. Halloumi squirty cheese taleggio roquefort.",
+				topic: "mitch",
+				article_img_url:
+					"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Vella_Cheese_Young_Jack_%28cropped%29.jpg/1200px-Vella_Cheese_Young_Jack_%28cropped%29.jpg",
+			};
+			return request(app)
+				.post("/api/articles")
+				.send(newArticle)
+				.expect(201)
+				.then((response) => {
+					const { article } = response.body;
+					expect(article.article_id).toBe(14);
+					expect(article).toHaveProperty(
+						"created_at",
+						expect.any(String)
+					);
+					expect(article.votes).toBe(0);
+					expect(article.author).toBe("icellusedkars");
+					expect(article.title).toBe("The best cheese");
+					expect(article.body).toBe(
+						"I love cheese, especially airedale airedale. Monterey jack rubber cheese cheese strings melted cheese port-salut camembert de normandie cream cheese red leicester. Emmental blue castello cheese and biscuits blue castello emmental macaroni cheese the big cheese croque monsieur. Halloumi squirty cheese taleggio roquefort."
+					);
+					expect(article.topic).toBe("mitch");
+					expect(article.article_img_url).toBe(
+						"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Vella_Cheese_Young_Jack_%28cropped%29.jpg/1200px-Vella_Cheese_Young_Jack_%28cropped%29.jpg"
+					);
+				});
+		});
+		test("POST: 201 should post a new article and return the new article object with comment_count and default img_url", () => {
+			const newArticle = {
+				author: "icellusedkars",
+				title: "The best cheese",
+				body: "I love cheese, especially airedale airedale. Monterey jack rubber cheese cheese strings melted cheese port-salut camembert de normandie cream cheese red leicester. Emmental blue castello cheese and biscuits blue castello emmental macaroni cheese the big cheese croque monsieur. Halloumi squirty cheese taleggio roquefort.",
+				topic: "mitch",
+			};
+			return request(app)
+				.post("/api/articles")
+				.send(newArticle)
+				.expect(201)
+				.then((response) => {
+					const { article } = response.body;
+					expect(article.comment_count).toBe("0");
+					expect(article.article_img_url).toBe(
+						"https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+					);
+				});
+		});
+		// 400 invalid req.body author
+		// 400 invalid req.body topic
+		// 400 invalid req.body article_img_url - BIG ASK to validate a url!
+	});
 	describe("POST /articles comment by article_id", () => {
 		test("POST: 201 /1/comments should add the comment and respond with the new comment", () => {
 			const newComment = {
