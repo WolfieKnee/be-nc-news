@@ -62,6 +62,84 @@ describe("/api", () => {
 		});
 	});
 	describe("GET /articles", () => {
+		test("GET: 200 / should respond with an array of article objects with the defined properties, _not including_ comment_count", () => {
+			return request(app)
+				.get("/api/articles/")
+				.expect(200)
+				.then((response) => {
+					const { articles } = response.body;
+					expect(articles.length).toBe(13);
+					articles.forEach((article) => {
+						expect(article).toHaveProperty(
+							"author",
+							expect.any(String)
+						);
+						expect(article).toHaveProperty(
+							"title",
+							expect.any(String)
+						);
+						expect(article).toHaveProperty(
+							"article_id",
+							expect.any(Number)
+						);
+						expect(article).toHaveProperty(
+							"topic",
+							expect.any(String)
+						);
+						expect(article).toHaveProperty(
+							"created_at",
+							expect.any(String)
+						);
+						expect(article).toHaveProperty(
+							"votes",
+							expect.any(Number)
+						);
+						expect(article).toHaveProperty(
+							"article_img_url",
+							expect.any(String)
+						);
+					});
+				});
+		});
+		test("GET: 200 / articles should not have a body property", () => {
+			return request(app)
+				.get("/api/articles/")
+				.expect(200)
+				.then((response) => {
+					const { articles } = response.body;
+					articles.forEach((article) => {
+						expect(article).not.toHaveProperty("body");
+					});
+				});
+		});
+		test("GET: 200 / articles should be sorted by date, descending", () => {
+			return request(app)
+				.get("/api/articles/")
+				.expect(200)
+				.then((response) => {
+					const { articles } = response.body;
+					expect(articles).toBeSortedBy("created_at", {
+						descending: true,
+					});
+				});
+		});
+		test("GET: 200 / articles should include the comment count ", () => {
+			return request(app)
+				.get("/api/articles/")
+				.expect(200)
+				.then((response) => {
+					const { articles } = response.body;
+					articles.forEach((article) => {
+						expect(article).toHaveProperty(
+							"comment_count",
+							expect.any(String)
+						);
+						if (article.article_id === 1) {
+							expect(article.comment_count).toBe("11");
+						}
+					});
+				});
+		});
 		describe("GET by :article_id", () => {
 			test("GET: 200 /:article_id should respond with an article object with the associated properties.", () => {
 				const expected = {
@@ -112,86 +190,6 @@ describe("/api", () => {
 					.then((response) => {
 						const { msg } = response.body;
 						expect(msg).toBe("Not Found");
-					});
-			});
-		});
-		describe("GET articles", () => {
-			test("GET: 200 / should respond with an array of article objects with the defined properties, _not including_ comment_count", () => {
-				return request(app)
-					.get("/api/articles/")
-					.expect(200)
-					.then((response) => {
-						const { articles } = response.body;
-						expect(articles.length).toBe(13);
-						articles.forEach((article) => {
-							expect(article).toHaveProperty(
-								"author",
-								expect.any(String)
-							);
-							expect(article).toHaveProperty(
-								"title",
-								expect.any(String)
-							);
-							expect(article).toHaveProperty(
-								"article_id",
-								expect.any(Number)
-							);
-							expect(article).toHaveProperty(
-								"topic",
-								expect.any(String)
-							);
-							expect(article).toHaveProperty(
-								"created_at",
-								expect.any(String)
-							);
-							expect(article).toHaveProperty(
-								"votes",
-								expect.any(Number)
-							);
-							expect(article).toHaveProperty(
-								"article_img_url",
-								expect.any(String)
-							);
-						});
-					});
-			});
-			test("GET: 200 / articles should not have a body property", () => {
-				return request(app)
-					.get("/api/articles/")
-					.expect(200)
-					.then((response) => {
-						const { articles } = response.body;
-						articles.forEach((article) => {
-							expect(article).not.toHaveProperty("body");
-						});
-					});
-			});
-			test("GET: 200 / articles should be sorted by date, descending", () => {
-				return request(app)
-					.get("/api/articles/")
-					.expect(200)
-					.then((response) => {
-						const { articles } = response.body;
-						expect(articles).toBeSortedBy("created_at", {
-							descending: true,
-						});
-					});
-			});
-			test("GET: 200 / articles should include the comment count ", () => {
-				return request(app)
-					.get("/api/articles/")
-					.expect(200)
-					.then((response) => {
-						const { articles } = response.body;
-						articles.forEach((article) => {
-							expect(article).toHaveProperty(
-								"comment_count",
-								expect.any(String)
-							);
-							if (article.article_id === 1) {
-								expect(article.comment_count).toBe("11");
-							}
-						});
 					});
 			});
 		});
