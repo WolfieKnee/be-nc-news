@@ -1,5 +1,5 @@
 const db = require("../db/connection");
-const { checkTopicExists } = require("./models.utils");
+const { checkTopicExists, checkUserExists } = require("./models.utils");
 
 exports.fetchArticleById = (article_id) => {
 	return db

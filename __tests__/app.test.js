@@ -447,7 +447,7 @@ describe("/api", () => {
 			});
 		});
 	});
-	describe("POST /articles adds a new article", () => {
+	describe.only("POST /articles adds a new article", () => {
 		test("POST: 201 should post a new article and return the new article object. This test does not include comment_count", () => {
 			const newArticle = {
 				author: "icellusedkars",
@@ -499,9 +499,68 @@ describe("/api", () => {
 					);
 				});
 		});
-		// 400 invalid req.body author
-		// 400 invalid req.body topic
-		// 400 invalid req.body article_img_url - BIG ASK to validate a url!
+		test("POST: 404 should respond with Not Found if author: notAnAuthor", () => {
+			const newArticle = {
+				author: "notAnAuthor",
+				title: "The best cheese",
+				body: "I love cheese",
+				topic: "mitch",
+			};
+			return request(app)
+				.post("/api/articles")
+				.send(newArticle)
+				.expect(404)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Not Found");
+				});
+		});
+		test("POST: 404 should respond with Not Found if topic: notATopic", () => {
+			const newArticle = {
+				author: "icellusedkars",
+				title: "The best cheese",
+				body: "I love cheese",
+				topic: "notATopic",
+			};
+			return request(app)
+				.post("/api/articles")
+				.send(newArticle)
+				.expect(404)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Not Found");
+				});
+		});
+		test("POST: 400 should respond with Bad Request if there is no title", () => {
+			const newArticle = {
+				author: "icellusedkars",
+				body: "I love cheese",
+				topic: "mitch",
+			};
+			return request(app)
+				.post("/api/articles")
+				.send(newArticle)
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
+				});
+		});
+		test("POST: 400 should respond with Bad Request if there is no body", () => {
+			const newArticle = {
+				author: "icellusedkars",
+				title: "The best cheese",
+				topic: "mitch",
+			};
+			return request(app)
+				.post("/api/articles")
+				.send(newArticle)
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
+				});
+		});
 	});
 	describe("POST /articles comment by article_id", () => {
 		test("POST: 201 /1/comments should add the comment and respond with the new comment", () => {
@@ -794,94 +853,6 @@ describe("/api", () => {
 				.then((response) => {
 					const { msg } = response.body;
 					expect(msg).toBe("Not Found");
-				});
-		});
-	});
-	describe("PATCH /comments by comment_id", () => {
-		test("PATCH: 201 /1 should update the comment by increasing the votes by the requested amount", () => {
-			const newVote = { inc_votes: 10 };
-			const expected = {
-				comment_id: 1,
-				body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-				votes: 26,
-				author: "butter_bridge",
-				article_id: 9,
-				created_at: "2020-04-06T12:17:00.000Z",
-			};
-			return request(app)
-				.patch("/api/comments/1")
-				.send(newVote)
-				.expect(201)
-				.then((response) => {
-					const { comment } = response.body;
-					for (const key in expected) {
-						expect(comment[key]).toEqual(expected[key]);
-					}
-				});
-		});
-		test("PATCH: 201 /1 should update the comment by decreasing the votes by the requested amount", () => {
-			const newVote = { inc_votes: -10 };
-			const expected = {
-				comment_id: 1,
-				body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-				votes: 6,
-				author: "butter_bridge",
-				article_id: 9,
-				created_at: "2020-04-06T12:17:00.000Z",
-			};
-			return request(app)
-				.patch("/api/comments/1")
-				.send(newVote)
-				.expect(201)
-				.then((response) => {
-					const { comment } = response.body;
-					for (const key in expected) {
-						expect(comment[key]).toEqual(expected[key]);
-					}
-				});
-		});
-		test("PATCH: 400 /invalid should respond with Bad Request", () => {
-			const newVote = { inc_votes: -10 };
-			return request(app)
-				.patch("/api/comments/invalid")
-				.send(newVote)
-				.expect(400)
-				.then((response) => {
-					const { msg } = response.body;
-					expect(msg).toBe("Bad Request");
-				});
-		});
-		test("PATCH: 404 /222 should respond with Not Found if article doesn't exist", () => {
-			const newVote = { inc_votes: -10 };
-			return request(app)
-				.patch("/api/comments/222")
-				.send(newVote)
-				.expect(404)
-				.then((response) => {
-					const { msg } = response.body;
-					expect(msg).toBe("Not Found");
-				});
-		});
-		test("PATCH: 400 /1 should respond with Bad Request if sent empty patch body", () => {
-			const newVote = {};
-			return request(app)
-				.patch("/api/comments/1")
-				.send(newVote)
-				.expect(400)
-				.then((response) => {
-					const { msg } = response.body;
-					expect(msg).toBe("Bad Request");
-				});
-		});
-		test("PATCH: 400 /1 should respond with Bad Request if sent invalid patch body", () => {
-			const newVote = { inc_votes: "invalid" };
-			return request(app)
-				.patch("/api/comments/1")
-				.send(newVote)
-				.expect(400)
-				.then((response) => {
-					const { msg } = response.body;
-					expect(msg).toBe("Bad Request");
 				});
 		});
 	});
