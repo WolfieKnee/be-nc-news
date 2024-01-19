@@ -10,7 +10,7 @@
 		}
 	},
 	"GET /api/articles": {
-		"description": "serves an array of all articles, default sorted by descending, created_at. Can be paginated with limit and p(age)",
+		"description": "Serves an array of all articles, default sorted by descending, created_at. Can be paginated with limit and p(age), in which case the response will be an object with the an array of that page of articles and and total_count property.",
 		"queries": [
 			"topic",
 			{ "sort_by": ["title", "topic", "author", "created_at", "votes"] },
