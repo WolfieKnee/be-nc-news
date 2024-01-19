@@ -23,7 +23,13 @@ exports.fetchArticleById = (article_id) => {
 		});
 };
 
-exports.fetchArticles = (topic, sort_by = "created_at", order = "DESC") => {
+exports.fetchArticles = (
+	topic,
+	sort_by = "created_at",
+	order = "DESC",
+	limit,
+	page
+) => {
 	const queryValues = [];
 	const validSortQuery = [
 		"created_at",
@@ -40,6 +46,9 @@ exports.fetchArticles = (topic, sort_by = "created_at", order = "DESC") => {
 	if (!validOrderQuery.includes(order)) {
 		return Promise.reject({ msg: "invalid order query" });
 	}
+	if ((limit && !Number(limit)) || (page && !Number(page))) {
+		return Promise.reject({ msg: "invalid pagination query" });
+	}
 
 	let queryStr = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) 
 	AS comment_count FROM articles LEFT OUTER JOIN comments 
@@ -51,15 +60,37 @@ exports.fetchArticles = (topic, sort_by = "created_at", order = "DESC") => {
 	queryStr += ` GROUP BY articles.article_id `;
 	queryStr += ` ORDER BY ${sort_by} ${order}`;
 
+	if (limit) {
+		queryStr += ` LIMIT ${limit} `;
+		if (page) {
+			queryStr += ` OFFSET ${page * limit - limit} `;
+		}
+	}
+
 	const articlesQuery = db.query(queryStr, queryValues);
 	const queries = [articlesQuery];
+
+	if (limit) {
+		const totalCountQuery = db.query(`SELECT count(*) FROM articles`);
+		queries.push(totalCountQuery);
+	}
+
 	if (topic) {
 		const topicExistsQuery = checkTopicExists(topic);
 		queries.push(topicExistsQuery);
 	}
+
 	return Promise.all(queries).then((resolvedQueries) => {
-		const results = resolvedQueries[0];
-		return results.rows;
+		const articleResults = resolvedQueries[0].rows;
+		if (resolvedQueries[1]) {
+			const totalCountResults = resolvedQueries[1].rows[0].count;
+			return {
+				articlesPage: articleResults,
+				total_count: totalCountResults,
+			};
+		} else {
+			return articleResults;
+		}
 	});
 };
 

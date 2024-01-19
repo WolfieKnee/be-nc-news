@@ -17,11 +17,11 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-	const { topic, sort_by, order } = req.query;
+	const { topic, sort_by, order, limit, p } = req.query;
 
-	fetchArticles(topic, sort_by, order)
+	fetchArticles(topic, sort_by, order, limit, p)
 		.then((articles) => {
-			res.status(200).send({ articles: articles });
+			res.status(200).send({ articles });
 		})
 		.catch((err) => {
 			next(err);
