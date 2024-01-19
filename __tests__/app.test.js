@@ -306,7 +306,7 @@ describe("/api", () => {
 					});
 			});
 		});
-		describe("GET articles sorted by the following queries: title, topic, author, date, votes", () => {
+		describe("GET articles sorted by the following queries: title, topic, author, date, votes, article_id", () => {
 			test("GET: 200 ?sort_by=title should serve the articles sorted by title, default descending", () => {
 				return request(app)
 					.get("/api/articles?sort_by=title")
@@ -367,6 +367,17 @@ describe("/api", () => {
 					.then((response) => {
 						const { articles } = response.body;
 						expect(articles).toBeSortedBy("votes", {
+							descending: true,
+						});
+					});
+			});
+			test("GET: 200 ?sort_by=article_id should serve the articles sorted by article_id, default descending", () => {
+				return request(app)
+					.get("/api/articles?sort_by=article_id")
+					.expect(200)
+					.then((response) => {
+						const { articles } = response.body;
+						expect(articles).toBeSortedBy("article_id", {
 							descending: true,
 						});
 					});

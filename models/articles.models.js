@@ -25,7 +25,14 @@ exports.fetchArticleById = (article_id) => {
 
 exports.fetchArticles = (topic, sort_by = "created_at", order = "DESC") => {
 	const queryValues = [];
-	const validSortQuery = ["created_at", "title", "topic", "author", "votes"];
+	const validSortQuery = [
+		"created_at",
+		"title",
+		"topic",
+		"author",
+		"votes",
+		"article_id",
+	];
 	const validOrderQuery = ["DESC", "desc", "ASC", "asc"];
 	if (!validSortQuery.includes(sort_by)) {
 		return Promise.reject({ msg: "invalid sort query" });
