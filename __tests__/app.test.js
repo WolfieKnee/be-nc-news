@@ -447,7 +447,7 @@ describe("/api", () => {
 			});
 		});
 	});
-	describe.only("POST /articles adds a new article", () => {
+	describe("POST /articles adds a new article", () => {
 		test("POST: 201 should post a new article and return the new article object. This test does not include comment_count", () => {
 			const newArticle = {
 				author: "icellusedkars",
