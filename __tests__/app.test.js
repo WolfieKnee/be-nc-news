@@ -1008,7 +1008,6 @@ describe("/api", () => {
 				});
 		});
 	});
-
 	describe("DELETE /article by article_id", () => {
 		test("DELETE: 204 /articles/:article_id should delete the specified article and respond with no content", () => {
 			return request(app)
@@ -1034,6 +1033,59 @@ describe("/api", () => {
 				.then((response) => {
 					const { msg } = response.body;
 					expect(msg).toBe("Not Found");
+				});
+		});
+	});
+	describe("POST /topic adds a new topic", () => {
+		test("POST: 201 should post a new topic and return the new topic object.", () => {
+			const newTopic = {
+				slug: "topic name here",
+				description: "description here",
+			};
+			return request(app)
+				.post("/api/topics")
+				.send(newTopic)
+				.expect(201)
+				.then((response) => {
+					const { topic } = response.body;
+					expect(topic.slug).toBe("topic name here");
+					expect(topic.description).toBe("description here");
+				});
+		});
+		test("POST: 400 should respond with Bad Request if there is no slug", () => {
+			const newTopic = {
+				description: "description here",
+			};
+			return request(app)
+				.post("/api/topics")
+				.send(newTopic)
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
+				});
+		});
+		test("POST: 201 should post a new topic and return the new topic object if there is no description.", () => {
+			const newTopic = {
+				slug: "topic name here",
+			};
+			return request(app)
+				.post("/api/topics")
+				.send(newTopic)
+				.expect(201)
+				.then((response) => {
+					const { topic } = response.body;
+					expect(topic.slug).toBe("topic name here");
+					expect(topic.description).toBe(null);
+				});
+		});
+		test("POST: 400 should respond with Bad Request if no body is sent", () => {
+			return request(app)
+				.post("/api/topics")
+				.expect(400)
+				.then((response) => {
+					const { msg } = response.body;
+					expect(msg).toBe("Bad Request");
 				});
 		});
 	});

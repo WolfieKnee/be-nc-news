@@ -123,6 +123,20 @@
 			]
 		}
 	},
+	"POST /api/topics": {
+		"description": "adds a new topic article and serves the new topic object",
+		"queries": [],
+		"exampleRequest": {
+			"slug": "topic name here",
+			"description": "description here"
+		},
+		"exampleResponse": {
+			"articles": {
+				"slug": "topic name here",
+				"description": "description here"
+			}
+		}
+	},
 	"PATCH /api/articles/:article_id": {
 		"description": "Increments the votes on the given article_id by the given amount, and serves with the updated article. Accepts +/-",
 		"queries": [],
@@ -152,7 +166,11 @@
 		}
 	},
 	"DELETE /api/comments/:comment_id": {
-		"description": "Deletes the given comment_id",
+		"description": "Deletes the given comment_id, server no response",
+		"queries": []
+	},
+	"DELETE /api/article/:article_id": {
+		"description": "Deletes the given article_id, server no response",
 		"queries": []
 	}
 }
