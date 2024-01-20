@@ -1009,7 +1009,7 @@ describe("/api", () => {
 		});
 	});
 
-	describe.only("DELETE /article by article_id", () => {
+	describe("DELETE /article by article_id", () => {
 		test("DELETE: 204 /articles/:article_id should delete the specified article and respond with no content", () => {
 			return request(app)
 				.delete("/api/articles/1")
