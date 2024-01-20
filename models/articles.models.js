@@ -141,3 +141,20 @@ exports.insertArticle = (newArticle) => {
 		return { ...article, comment_count: "0" };
 	});
 };
+
+exports.removeArticleById = (article_id) => {
+	return db
+		.query(
+			`DELETE FROM comments
+		WHERE comment_id = $1
+		RETURNING *`,
+			[article_id]
+		)
+		.then((result) => {
+			if (result.rows.length === 0) {
+				return Promise.reject({
+					msg: "requested article does not exist",
+				});
+			}
+		});
+};
