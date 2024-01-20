@@ -1,7 +1,9 @@
 # [NC-News](https://nc-news-wa7h.onrender.com/api) Backend Software Development Project
 
 I completed this #backend project as part of the Software Development Bootcamp with [Northcoders](https://northcoders.com/). The project, "NC News API", uses _psql_ to setup a database of news articles (think Reddit), and HTTP endpoints with _express_ to make data available to a client. It is now live, with the databased hosted on [ElephantSQL](https://www.elephantsql.com/) and deployed on [Render](https://render.com/) at:
+
 https://nc-news-wa7h.onrender.com/api
+
 where a summary of available endpoints can be seen.
 
 In a few weeks I'll be doing a #frontend project to provide a user interface for this.
