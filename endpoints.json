@@ -32,7 +32,7 @@
 			]
 		}
 	},
-	"GET /api/articles/:aticle_id": {
+	"GET /api/articles/:article_id": {
 		"description": "serves an object with the requested article",
 		"queries": [],
 		"exampleResponse": {
@@ -46,7 +46,7 @@
 			"article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
 		}
 	},
-	"GET /api/articles/:aticle_id/comments": {
+	"GET /api/articles/:article_id/comments": {
 		"description": "Serves an array of comments for the requested article_id. Can be paginated with limit and p(age), in which case the response will be an object with the an array of that page of articles and and total_count property.",
 		"queries": ["limit", "p"],
 		"exampleResponse": {
