@@ -140,7 +140,7 @@
 	"PATCH /api/articles/:article_id": {
 		"description": "Increments the votes on the given article_id by the given amount, and serves with the updated article. Accepts +/-",
 		"queries": [],
-		"exampleRequest": { "newVote": 10 },
+		"exampleRequest": { "inc_votes": 10 },
 		"exampleResponse": {
 			"article_id": 1,
 			"title": "Living in the shadow of a great man",
