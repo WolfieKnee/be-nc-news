@@ -38,6 +38,7 @@ exports.fetchArticles = (
 		"author",
 		"votes",
 		"article_id",
+		"comment_count",
 	];
 	const validOrderQuery = ["DESC", "desc", "ASC", "asc"];
 	if (!validSortQuery.includes(sort_by)) {
@@ -50,7 +51,7 @@ exports.fetchArticles = (
 		return Promise.reject({ msg: "invalid pagination query" });
 	}
 
-	let queryStr = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) 
+	let queryStr = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id)::INT 
 	AS comment_count FROM articles LEFT OUTER JOIN comments 
 	ON comments.article_id = articles.article_id`;
 	if (topic) {
