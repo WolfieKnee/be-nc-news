@@ -72,7 +72,16 @@ exports.fetchArticles = (
 	const queries = [articlesQuery];
 
 	if (limit) {
-		const totalCountQuery = db.query(`SELECT count(*) FROM articles`);
+		const totalCountQueryValues = [];
+		let totalCountQueryStr = `SELECT count(*) FROM articles`;
+		if (topic) {
+			totalCountQueryStr += ` WHERE topic = $1`;
+			totalCountQueryValues.push(topic);
+		}
+		const totalCountQuery = db.query(
+			totalCountQueryStr,
+			totalCountQueryValues
+		);
 		queries.push(totalCountQuery);
 	}
 
