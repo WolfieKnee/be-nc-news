@@ -545,6 +545,18 @@ describe("/api", () => {
 					});
 			});
 		});
+		test("GET: 200 ?topic=mitch&limit=2&p=3 should respond with an array of articles with the correct topic and accurate total_count", () => {
+			return request(app)
+				.get("/api/articles?topic=mitch&limit=2&p=3")
+				.expect(200)
+				.then((response) => {
+					const { articlesPage } = response.body.articles;
+					const { total_count } = response.body.articles;
+					expect(articlesPage.length).toBe(2);
+					expect(articlesPage[0].topic).toBe("mitch");
+					expect(total_count).toBe("12");
+				});
+		});
 		describe("GET articles by :article_id with pagination", () => {
 			test("GET: 200 /:article_id/comments?limit=4 should respond with an object containing an array of the first 4 comments on the given article ", () => {
 				return request(app)
